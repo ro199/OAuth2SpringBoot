@@ -11,14 +11,20 @@ import com.krugger.resourceserver.enums.TipoVacuna;
 import com.krugger.resourceserver.repository.EmpleadoRepository;
 import com.krugger.resourceserver.repository.RoleRepository;
 import com.krugger.resourceserver.repository.UserRepository;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,9 +71,40 @@ public class EmpleadoService {
         return empleadoRepository.findAll();
     }
 
-    public Empleado obtenerEmpleadoPorCedula(String cedula) {
-        return empleadoRepository.findByCedula(cedula)
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrada"));
+    public List<Empleado> buscarEmpleadosConFiltros(Boolean vacunado, String tipoVacuna, LocalDate fechaInicio, LocalDate fechaFin) {
+        Specification<Empleado> specification = Specification.where(null);
+
+        if (vacunado != null) {
+            specification = specification.and((root, query, criteriaBuilder) -> {
+                if (vacunado) {
+                    return criteriaBuilder.isTrue(root.get("vacunado"));
+                } else {
+                    return criteriaBuilder.isFalse(root.get("vacunado"));
+                }
+            });
+        }
+
+        if (tipoVacuna != null && !tipoVacuna.isEmpty()) {
+            specification = specification.and((root, query, criteriaBuilder) -> {
+                Join<Empleado, Vacuna> join = root.join("vacunas", JoinType.LEFT);
+                return criteriaBuilder.equal(join.get("tipoVacuna"), tipoVacuna);
+            });
+        }
+
+        if (fechaInicio != null) {
+            specification = specification.and((root, query, criteriaBuilder) -> {
+                return criteriaBuilder.greaterThanOrEqualTo(root.get("fechaNacimiento"), Date.from(fechaInicio.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+            });
+        }
+
+        if (fechaFin != null) {
+            specification = specification.and((root, query, criteriaBuilder) -> {
+                return criteriaBuilder.lessThanOrEqualTo(root.get("fechaNacimiento"), Date.from(fechaFin.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+            });
+        }
+
+        // Aplica la especificación para buscar empleados
+        return empleadoRepository.findAll(specification);
     }
 
     public MessageDto actualizarEmpleado(@Validated @RequestBody EmpleadoDTO empleadoDTO) {

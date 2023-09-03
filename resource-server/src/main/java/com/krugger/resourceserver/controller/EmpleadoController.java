@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -29,10 +30,15 @@ public class EmpleadoController {
         return empleadoService.listarEmpleados();
     }
 
-    @GetMapping("/{cedula}")
+    @GetMapping("/empleados")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public Empleado obtenerEmpleado(@PathVariable String cedula) {
-        return empleadoService.obtenerEmpleadoPorCedula(cedula);
+    public List<Empleado> buscarEmpleadosConFiltros(
+            @RequestParam(name = "vacunado", required = false) Boolean vacunado,
+            @RequestParam(name = "tipoVacuna", required = false) String tipoVacuna,
+            @RequestParam(name = "fechaInicio", required = false) LocalDate fechaInicio,
+            @RequestParam(name = "fechaFin", required = false) LocalDate fechaFin
+    ) {
+        return empleadoService.buscarEmpleadosConFiltros(vacunado, tipoVacuna, fechaInicio, fechaFin);
     }
 
     @PutMapping
