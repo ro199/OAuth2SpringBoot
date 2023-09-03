@@ -25,12 +25,12 @@ public class EmpleadoController {
         return empleadoService.registrarEmpleado(empleado);
     }
     @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMIN,ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public List<Empleado> listarEmpleados() {
         return empleadoService.listarEmpleados();
     }
 
-    @GetMapping("/empleados")
+    @GetMapping("/buscarEmpleados")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<Empleado> buscarEmpleadosConFiltros(
             @RequestParam(name = "vacunado", required = false) Boolean vacunado,
@@ -42,7 +42,7 @@ public class EmpleadoController {
     }
 
     @PutMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public MessageDto actualizarEmpleado(@Validated @RequestBody EmpleadoDTO empleadoDTO) {
         return empleadoService.actualizarEmpleado(empleadoDTO);
     }
