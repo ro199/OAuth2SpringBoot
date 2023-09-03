@@ -26,7 +26,7 @@ Asegúrate de tener instaladas las siguientes herramientas antes de continuar:
 ```bash
 git clone https://github.com/ro199/OAuth2SpringBoot.git
 cd OAuth2SpringBoot
-
+```
 ## Antes de Empezar
 
 ### Restaurar la Base de Datos
