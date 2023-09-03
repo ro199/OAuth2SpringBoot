@@ -24,5 +24,5 @@ Asegúrate de tener instaladas las siguientes herramientas antes de continuar:
 1. Clona este repositorio a tu máquina local.
 
 ```bash
-git clone https://github.com/ro199/tuproyecto.git
-cd tuproyecto
+git clone https://github.com/ro199/OAuth2SpringBoot.git
+cd OAuth2SpringBoot
