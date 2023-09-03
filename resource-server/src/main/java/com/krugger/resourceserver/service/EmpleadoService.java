@@ -110,10 +110,10 @@ public class EmpleadoService {
     public MessageDto actualizarEmpleado(@Validated @RequestBody EmpleadoDTO empleadoDTO) {
         return empleadoRepository.findByCedula(empleadoDTO.getCedula())
                 .map(empleado -> {
-                    empleado.setNombres(empleadoDTO.getNombres());
-                    empleado.setApellidos(empleadoDTO.getApellidos());
-                    empleado.setCorreo(empleadoDTO.getCorreo());
-                    if(empleado.isVacunado()){
+                    empleado.setFechaNacimiento(empleadoDTO.getFechaNacimiento());
+                    empleado.setDireccionDomicilio(empleadoDTO.getDireccionDomicilio());
+                    empleado.setTelefonoMovil(empleadoDTO.getTelefonoMovil());
+                    if(empleadoDTO.isVacunado()){
                         if(empleadoDTO.getVacunas() == null || empleadoDTO.getVacunas().isEmpty()){
                             throw new RuntimeException("Informacion de Vacuna es requerida");
                         }
