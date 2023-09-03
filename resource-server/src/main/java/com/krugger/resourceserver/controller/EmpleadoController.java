@@ -29,10 +29,10 @@ public class EmpleadoController {
         return empleadoService.listarEmpleados();
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN,ROLE_USER')")
-    public Empleado obtenerEmpleadoPorId(@PathVariable Long id) {
-        return empleadoService.obtenerEmpleadoPorId(id);
+    @GetMapping("/{cedula}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public Empleado obtenerEmpleado(@PathVariable String cedula) {
+        return empleadoService.obtenerEmpleadoPorCedula(cedula);
     }
 
     @PutMapping

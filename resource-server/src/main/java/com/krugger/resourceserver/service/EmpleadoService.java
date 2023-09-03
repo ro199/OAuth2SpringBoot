@@ -5,7 +5,9 @@ import com.krugger.resourceserver.dto.MessageDto;
 import com.krugger.resourceserver.entity.Empleado;
 import com.krugger.resourceserver.entity.Role;
 import com.krugger.resourceserver.entity.User;
+import com.krugger.resourceserver.entity.Vacuna;
 import com.krugger.resourceserver.enums.RoleName;
+import com.krugger.resourceserver.enums.TipoVacuna;
 import com.krugger.resourceserver.repository.EmpleadoRepository;
 import com.krugger.resourceserver.repository.RoleRepository;
 import com.krugger.resourceserver.repository.UserRepository;
@@ -74,10 +76,37 @@ public class EmpleadoService {
                     empleado.setNombres(empleadoDTO.getNombres());
                     empleado.setApellidos(empleadoDTO.getApellidos());
                     empleado.setCorreo(empleadoDTO.getCorreo());
+                    if(empleado.isVacunado()){
+                        if(empleadoDTO.getVacunas() == null || empleadoDTO.getVacunas().isEmpty()){
+                            throw new RuntimeException("Informacion de Vacuna es requerida");
+                        }
+
+                        Set<Vacuna> vacunas = new HashSet<>();
+                        empleadoDTO.getVacunas().forEach(vacuna -> {
+                            try {
+                                TipoVacuna tipoVacuna = TipoVacuna.valueOf(vacuna.getTipoVacuna());
+                            } catch (IllegalArgumentException e) {
+                                throw new RuntimeException("Tipo de vacuna requerido");
+                            }
+
+                            if(vacuna.getFechaVacunacion() == null){
+                                throw new RuntimeException("Fecha de Vacunacion requerida");
+                            }
+
+                            if(vacuna.getNumeroDosis() == -1){
+                                throw new RuntimeException("Numero de dosis requerido");
+                            }
+
+                            vacunas.add(vacuna);
+
+                        });
+                        empleado.setVacunas(vacunas);
+
+                    }
                     empleadoRepository.save(empleado);
                     return new MessageDto("Empleado "+ empleado.getCedula() + " Actualizado");
                 })
-                .orElseThrow(() -> new RuntimeException("Persona no encontrada"));
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrada"));
     }
 
     public MessageDto eliminarEmpleado(@PathVariable Long id) {

@@ -1,5 +1,6 @@
 package com.krugger.resourceserver.dto;
 
+import com.krugger.resourceserver.entity.Vacuna;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -7,6 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
+import java.util.Set;
 
 @Data
 @RequiredArgsConstructor
@@ -27,4 +29,8 @@ public class EmpleadoDTO {
     private String direccionDomicilio;
     private String telefonoMovil;
     private boolean vacunado;
+
+    private Set<Vacuna> vacunas;
+
+
 }
